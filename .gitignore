@@ -33,6 +33,15 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# contact leads (contain phone numbers)
+/data/leads.json
+
+# contraseña del panel elegida en /admin/recuperar
+/data/admin-password.json
+
+# archivos temporales de la escritura atómica de site.json
+/data/*.tmp
+
 # vercel
 .vercel
 

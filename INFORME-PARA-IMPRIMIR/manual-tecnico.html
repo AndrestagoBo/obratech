@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ObraTech Bogotá — Manual técnico y revisión del código</title>
+  <style>
+    :root {
+      --ink: #171717;
+      --muted: #5f6368;
+      --line: #d9d9d9;
+      --soft: #f3f3f3;
+      --brand: #c2410c;
+      --danger: #a61b1b;
+      --warning: #8a5300;
+      --success: #17633a;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #e8e8e8;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.52;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      color: white;
+      background: #171717;
+    }
+    .toolbar button, .toolbar a {
+      border: 1px solid #777;
+      padding: 8px 14px;
+      color: white;
+      background: transparent;
+      font: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .toolbar button { background: #c2410c; border-color: #c2410c; }
+    .sheet {
+      width: min(210mm, calc(100% - 24px));
+      margin: 18px auto;
+      padding: 18mm 17mm;
+      background: white;
+    }
+    .cover {
+      min-height: 245mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .kicker {
+      color: var(--brand);
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, h4 { line-height: 1.15; }
+    h1 { max-width: 155mm; margin: 14mm 0 6mm; font-size: 29pt; letter-spacing: -.035em; }
+    h2 {
+      margin: 0 0 7mm;
+      padding-bottom: 3mm;
+      border-bottom: 2px solid var(--ink);
+      font-size: 20pt;
+      letter-spacing: -.025em;
+    }
+    h3 { margin: 8mm 0 3mm; font-size: 14pt; }
+    h4 { margin: 5mm 0 2mm; font-size: 11pt; }
+    p { margin: 0 0 3.2mm; }
+    ul, ol { margin: 2mm 0 5mm; padding-left: 6mm; }
+    li { margin: 1.2mm 0; }
+    code {
+      padding: 1px 4px;
+      border: 1px solid #ddd;
+      background: #f7f7f7;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 9pt;
+    }
+    pre {
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      padding: 4mm;
+      border-left: 3px solid var(--brand);
+      background: var(--soft);
+      font: 8.8pt/1.5 Consolas, "Courier New", monospace;
+    }
+    table {
+      width: 100%;
+      margin: 3mm 0 7mm;
+      border-collapse: collapse;
+      font-size: 9pt;
+    }
+    th, td {
+      padding: 2.5mm 2mm;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: var(--soft); }
+    .lead { max-width: 155mm; color: #383838; font-size: 14pt; }
+    .meta { color: var(--muted); font-size: 9pt; }
+    .summary {
+      margin: 8mm 0;
+      padding: 5mm;
+      border-left: 4px solid var(--brand);
+      background: var(--soft);
+      font-size: 11.5pt;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+    .card { padding: 4mm; border: 1px solid var(--line); }
+    .card h3, .card h4 { margin-top: 0; }
+    .stat { font-size: 19pt; font-weight: 700; }
+    .status {
+      display: inline-block;
+      margin-right: 2mm;
+      padding: 1mm 2mm;
+      border: 1px solid currentColor;
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .critical { color: var(--danger); }
+    .high { color: var(--warning); }
+    .good { color: var(--success); }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3mm;
+      align-items: stretch;
+      margin: 6mm 0;
+    }
+    .flow > div {
+      position: relative;
+      padding: 3mm;
+      border: 1px solid var(--line);
+      text-align: center;
+      font-size: 8.5pt;
+    }
+    .flow > div:not(:last-child)::after {
+      position: absolute;
+      top: 50%;
+      right: -3mm;
+      width: 3mm;
+      content: "→";
+      color: var(--brand);
+      font-weight: 700;
+      transform: translateY(-50%);
+    }
+    .toc { columns: 2; column-gap: 12mm; }
+    .toc a { color: var(--ink); text-decoration: none; }
+    .toc li { break-inside: avoid; }
+    .page { page-break-before: always; padding-top: 2mm; }
+    .avoid { break-inside: avoid; }
+    .footer-note {
+      margin-top: 12mm;
+      padding-top: 3mm;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 8pt;
+    }
+    @media (max-width: 760px) {
+      .grid-2, .grid-3, .flow { grid-template-columns: 1fr; }
+      .flow > div::after { display: none; }
+      .toc { columns: 1; }
+      .sheet { width: 100%; margin: 0; padding: 24px 18px; }
+    }
+    @media print {
+      @page { size: A4; margin: 14mm 15mm 16mm; }
+      body { background: white; font-size: 9.5pt; }
+      .toolbar { display: none !important; }
+      .sheet { width: auto; margin: 0; padding: 0; }
+      .cover { min-height: 255mm; }
+      h2, h3, h4 { break-after: avoid; }
+      table, pre, .card, .summary, .flow, .avoid { break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="toolbar" aria-label="Acciones del documento">
+    <button type="button" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <a href="#contenido">Ir al contenido</a>
+  </nav>
+
+  <main class="sheet">
+    <section class="cover">
+      <div>
+        <p class="kicker">Revisión del código y explicación completa</p>
+        <h1>ObraTech Bogotá<br>Manual técnico imprimible</h1>
+        <p class="lead">
+          Qué hace la aplicación, cómo está construida, cómo circulan los datos,
+          cómo se administra y qué falta antes de publicarla en producción.
+        </p>
+        <div class="summary">
+          <strong>Conclusión ejecutiva:</strong> es un MVP funcional de captación de clientes
+          para servicios del hogar. La web pública, el asesor conversacional, el formulario
+          y el panel administrativo están conectados. El código compila y la prueba del chat
+          cubre 101 conversaciones. Su principal limitación es de infraestructura: guarda
+          contenido, teléfonos y fotos en archivos locales, por lo que necesita un servidor
+          con disco persistente. Antes de exponerlo a Internet también deben reforzarse las
+          credenciales y el acceso al panel.
+        </div>
+      </div>
+      <div>
+        <p><strong>Proyecto:</strong> <code>C:\Users\valen\obratech-web</code></p>
+        <p><strong>Fecha del informe:</strong> 23 de septiembre de 2026</p>
+        <p><strong>Estado comercial:</strong> validación inicial; identidad legal pendiente.</p>
+        <p class="meta">
+          Este documento es independiente del código de la aplicación. Puede imprimirse o
+          guardarse como PDF sin modificar el sitio.
+        </p>
+      </div>
+    </section>
+
+    <section id="contenido" class="page">
+      <h2>Contenido</h2>
+      <ol class="toc">
+        <li><a href="#vision">Visión general</a></li>
+        <li><a href="#arquitectura">Arquitectura y recorrido de datos</a></li>
+        <li><a href="#tecnologias">Tecnologías y configuración</a></li>
+        <li><a href="#paginas">Páginas y experiencia pública</a></li>
+        <li><a href="#componentes">Componentes visuales</a></li>
+        <li><a href="#chat">Asesor conversacional</a></li>
+        <li><a href="#admin">Panel administrativo</a></li>
+        <li><a href="#api">APIs</a></li>
+        <li><a href="#datos">Datos y almacenamiento</a></li>
+        <li><a href="#seguridad">Seguridad</a></li>
+        <li><a href="#seo">SEO, accesibilidad y rendimiento</a></li>
+        <li><a href="#local">Uso local y acceso desde el celular</a></li>
+        <li><a href="#pruebas">Pruebas y calidad</a></li>
+        <li><a href="#publicar">Publicación</a></li>
+        <li><a href="#mantenimiento">Mantenimiento diario</a></li>
+        <li><a href="#riesgos">Riesgos y prioridades</a></li>
+        <li><a href="#mapa">Mapa de archivos</a></li>
+        <li><a href="#glosario">Glosario</a></li>
+      </ol>
+    </section>
+
+    <section id="vision" class="page">
+      <h2>1. Visión general</h2>
+      <p>
+        ObraTech es una aplicación web para convertir visitas en solicitudes de servicio.
+        No calcula precios automáticamente y no ejecuta una inteligencia artificial externa.
+        Su objetivo es obtener suficiente información para que una persona de ObraTech continúe
+        la atención y prepare una cotización por WhatsApp.
+      </p>
+
+      <div class="grid-3">
+        <article class="card">
+          <p class="stat">1</p>
+          <h3>Web pública</h3>
+          <p>Explica servicios, muestra proyectos, responde preguntas y ofrece varios caminos de contacto.</p>
+        </article>
+        <article class="card">
+          <p class="stat">2</p>
+          <h3>Captura de solicitudes</h3>
+          <p>El asesor o el formulario recogen nombre, teléfono, zona y trabajo requerido.</p>
+        </article>
+        <article class="card">
+          <p class="stat">3</p>
+          <h3>Operación interna</h3>
+          <p>El panel muestra las solicitudes, permite contactar por WhatsApp y editar el contenido.</p>
+        </article>
+      </div>
+
+      <h3>Qué sí hace</h3>
+      <ul>
+        <li>Presenta reparaciones, pintura, plomería, electricidad, instalaciones, fachadas, impermeabilización y remodelación.</li>
+        <li>Clasifica problemas expresados en lenguaje cotidiano.</li>
+        <li>Solicita zona, nombre y celular.</li>
+        <li>Guarda solicitudes procedentes del chat y del formulario.</li>
+        <li>Abre conversaciones de WhatsApp con mensajes prellenados.</li>
+        <li>Permite editar textos, fotos, preguntas frecuentes, zonas, proyectos y testimonios desde <code>/admin</code>.</li>
+      </ul>
+
+      <h3>Qué no hace</h3>
+      <ul>
+        <li>No cobra ni recibe pagos.</li>
+        <li>No agenda técnicos automáticamente.</li>
+        <li>No genera una cotización definitiva.</li>
+        <li>No tiene cuentas separadas, roles ni doble factor para administradores.</li>
+        <li>No usa una base de datos externa.</li>
+        <li>No puede conservar datos en un hosting cuyo disco se borre al reiniciar.</li>
+      </ul>
+    </section>
+
+    <section id="arquitectura" class="page">
+      <h2>2. Arquitectura y recorrido de datos</h2>
+      <p>
+        La aplicación utiliza el App Router de Next.js. Las páginas del servidor leen el
+        contenido desde <code>data/site.json</code>; los componentes interactivos se ejecutan
+        en el navegador; las rutas bajo <code>app/api</code> reciben peticiones y escriben archivos.
+      </p>
+
+      <div class="flow" aria-label="Flujo principal">
+        <div><strong>Visitante</strong><br>Home, chat o formulario</div>
+        <div><strong>Navegador</strong><br>Componentes React</div>
+        <div><strong>API Next.js</strong><br>Valida la petición</div>
+        <div><strong>Archivos JSON</strong><br>Contenido y leads</div>
+        <div><strong>Panel admin</strong><br>Lee y actualiza</div>
+      </div>
+
+      <h3>Recorrido de una solicitud del chat</h3>
+      <ol>
+        <li>El visitante abre <code>components/site-assistant.tsx</code>.</li>
+        <li>La interfaz envía mensaje y estado a <code>POST /api/assistant</code>.</li>
+        <li>La API limpia los datos y llama <code>answerLocally()</code> en <code>lib/assistant-local.ts</code>.</li>
+        <li>El motor detecta el trabajo, formula preguntas y construye un estado actualizado.</li>
+        <li>Cuando hay confirmación, nombre y teléfono válidos, <code>appendLead()</code> escribe en <code>data/leads.json</code>.</li>
+        <li>El panel obtiene esa solicitud mediante <code>GET /api/leads</code>.</li>
+        <li>Al contactar, el panel abre <code>wa.me</code> y cambia el estado de la solicitud.</li>
+      </ol>
+
+      <h3>Recorrido de una edición de contenido</h3>
+      <ol>
+        <li>El administrador inicia sesión y recibe una cookie firmada.</li>
+        <li>El panel obtiene <code>data/site.json</code> por <code>GET /api/admin/content</code>.</li>
+        <li>Los cambios permanecen inicialmente en el estado del navegador.</li>
+        <li>Al guardar, <code>PUT /api/admin/content</code> reescribe <code>data/site.json</code>.</li>
+        <li>La home usa renderizado dinámico; al recargar, lee el archivo actualizado sin recompilar.</li>
+      </ol>
+    </section>
+
+    <section id="tecnologias" class="page">
+      <h2>3. Tecnologías y configuración</h2>
+      <table>
+        <thead><tr><th>Pieza</th><th>Versión / archivo</th><th>Responsabilidad</th></tr></thead>
+        <tbody>
+          <tr><td>Next.js</td><td>16.2.2</td><td>Páginas, servidor, rutas API, imágenes y metadatos.</td></tr>
+          <tr><td>React</td><td>19.2.4</td><td>Interfaz y estado de componentes.</td></tr>
+          <tr><td>TypeScript</td><td>5, modo estricto</td><td>Tipos y detección de errores antes de ejecutar.</td></tr>
+          <tr><td>Tailwind CSS</td><td>4</td><td>Clases de presentación y diseño adaptable.</td></tr>
+          <tr><td>Lucide React</td><td>1.7.0</td><td>Iconos.</td></tr>
+          <tr><td>Persistencia</td><td>JSON + filesystem</td><td>Contenido, solicitudes e imágenes subidas.</td></tr>
+          <tr><td>Tipografía</td><td>Space Grotesk</td><td>Fuente global servida mediante Next.js.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Configuración clave</h3>
+      <ul>
+        <li><code>next.config.ts</code>: habilita calidades 75 y 90 para el optimizador de imágenes.</li>
+        <li><code>tsconfig.json</code>: activa <code>strict</code>, resolución bundler y alias <code>@/*</code>.</li>
+        <li><code>eslint.config.mjs</code>: reglas de Next.js, Core Web Vitals y TypeScript.</li>
+        <li><code>app/globals.css</code>: colores, tipografía, botones, espacios, animaciones y foco accesible.</li>
+        <li><code>.gitignore</code>: excluye dependencias, builds, variables secretas y <code>data/leads.json</code>.</li>
+      </ul>
+
+      <h3>Variables de entorno</h3>
+      <table>
+        <thead><tr><th>Variable</th><th>Uso</th><th>Regla</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>ADMIN_PASSWORD</code></td>
+            <td>Contraseña única del panel.</td>
+            <td>Obligatoria. Larga, aleatoria y distinta del ejemplo, o el login falla.</td>
+          </tr>
+          <tr>
+            <td><code>ADMIN_SECRET</code></td>
+            <td>Firma HMAC de la cookie y del estado del chat.</td>
+            <td>Obligatoria para el panel. Otro secreto independiente.</td>
+          </tr>
+          <tr>
+            <td><code>NEXT_PUBLIC_SITE_URL</code></td>
+            <td>Dominio usado en SEO, sitemap y datos estructurados.</td>
+            <td>Debe existir antes de <code>npm run build</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Si <code>NEXT_PUBLIC_SITE_URL</code> no está definida durante la compilación,
+        <code>robots.txt</code> y <code>sitemap.xml</code> quedan construidos con
+        <code>http://localhost:3000</code>. Cambiarla después no modifica el build ya generado.
+      </p>
+    </section>
+
+    <section id="paginas" class="page">
+      <h2>4. Páginas y experiencia pública</h2>
+      <table>
+        <thead><tr><th>Ruta</th><th>Tipo</th><th>Función</th><th>Indexación</th></tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td>Dinámica</td><td>Landing comercial completa.</td><td>Sí</td></tr>
+          <tr><td><code>/privacidad</code></td><td>Estática</td><td>Tratamiento de datos personales.</td><td>Sí</td></tr>
+          <tr><td><code>/diseno</code></td><td>Dinámica</td><td>La misma home, sin chat, formulario ni barra móvil.</td><td>No</td></tr>
+          <tr><td><code>/admin</code></td><td>Estática + cliente</td><td>Login y administración.</td><td>No</td></tr>
+          <tr><td><code>/admin/recuperar</code></td><td>Estática + cliente</td><td>Elegir otra contraseña desde este computador, por localhost.</td><td>No</td></tr>
+          <tr><td><code>/_not-found</code></td><td>Estática</td><td>Página para URLs inexistentes.</td><td>No aplica</td></tr>
+          <tr><td><code>/robots.txt</code></td><td>Estática</td><td>Bloquea rastreo de admin, APIs y diseño.</td><td>Archivo técnico</td></tr>
+          <tr><td><code>/sitemap.xml</code></td><td>Estática</td><td>Lista home y privacidad.</td><td>Archivo técnico</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Orden de la home</h3>
+      <ol>
+        <li>Barra superior: zona, teléfono y horario.</li>
+        <li>Header fijo: logo, navegación y WhatsApp.</li>
+        <li>Hero: propuesta de valor. El botón naranja abre el asesor (“Cuéntanos qué necesitas”). WhatsApp va al lado, en botón secundario. Debajo: “Te escribimos el mismo día, de lunes a sábado.”</li>
+        <li>Proyectos, grandes, con el título “Trabajos reales.”. Una foto de antes es opcional; si existe, se ve junto al después.</li>
+        <li>Barra de confianza con los distintivos.</li>
+        <li>Servicios: seis oficios que abren el asesor, y tres tarjetas de exteriores.</li>
+        <li>Proceso de cuatro pasos.</li>
+        <li>Por qué ObraTech: franja corta, con foto y fondo.</li>
+        <li>Testimonios, solo si se activan.</li>
+        <li>Cobertura y preguntas frecuentes.</li>
+        <li>Cierre con un solo botón, el del asesor.</li>
+        <li>Formulario alternativo, solo en la home pública.</li>
+        <li>Pie con contacto e identidad opcional.</li>
+        <li>Asesor y, en el teléfono, barra inferior: “Cuéntanos” en naranja y WhatsApp al lado. No hay botón flotante de WhatsApp.</li>
+      </ol>
+
+      <h3>Diseño actual</h3>
+      <p>
+        El sistema es deliberadamente oscuro: fondo casi negro, superficies gris oscuro,
+        texto blanco y naranja quemado <code>#e85d04</code> para acciones. Usa una rejilla
+        de 12 columnas, ancho máximo de 1400 px y espacios amplios. Los cambios recientes
+        mantienen el tema oscuro, optimizan el hero, agregan iconos a confianza y proceso,
+        diferencian las listas y aumentan la legibilidad del formulario.
+      </p>
+      <div class="summary">
+        La imagen del hero mide 1024 × 576 px. Aunque Next.js ahora la optimiza y precarga,
+        en pantallas de 1920 px puede verse suave porque el archivo original no contiene
+        suficientes píxeles. La mejora real requiere una imagen original de al menos 2400 px de ancho.
+      </div>
+    </section>
+
+    <section id="componentes" class="page">
+      <h2>5. Componentes visuales</h2>
+      <table>
+        <thead><tr><th>Archivo</th><th>Rol</th><th>Dónde se ejecuta</th></tr></thead>
+        <tbody>
+          <tr><td><code>site-header.tsx</code></td><td>Navegación desktop/móvil y estado al hacer scroll.</td><td>Navegador</td></tr>
+          <tr><td><code>logo.tsx</code></td><td>Logo optimizado con <code>next/image</code>.</td><td>Servidor</td></tr>
+          <tr><td><code>section-heading.tsx</code></td><td>Título reutilizable de secciones.</td><td>Servidor</td></tr>
+          <tr><td><code>site-json-ld.tsx</code></td><td>Datos estructurados de negocio para buscadores.</td><td>Servidor</td></tr>
+          <tr><td><code>site-assistant.tsx</code></td><td>Ventana del asesor, historial y sesión local.</td><td>Navegador</td></tr>
+          <tr><td><code>open-assistant-button.tsx</code></td><td>Emite evento global para abrir el asesor.</td><td>Navegador</td></tr>
+          <tr><td><code>whatsapp-link.tsx</code></td><td>Construye enlaces seguros a WhatsApp.</td><td>Servidor</td></tr>
+          <tr><td><code>site-shell.tsx</code></td><td>Arma la home y la vista de diseño con el mismo orden.</td><td>Servidor</td></tr>
+          <tr><td><code>mobile-action-bar.tsx</code></td><td>Barra inferior del teléfono: asesor y WhatsApp.</td><td>Navegador</td></tr>
+          <tr><td><code>sections/*</code></td><td>Hero, confianza, servicios, proceso, proyectos, nosotros, testimonios, FAQ, CTA, formulario y footer.</td><td>Mixto</td></tr>
+          <tr><td><code>admin/admin-app.tsx</code></td><td>Login y las tres pestañas del panel.</td><td>Navegador</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Componentes de cliente</h3>
+      <p>
+        Los archivos con <code>"use client"</code> pueden usar estado, eventos, almacenamiento
+        del navegador y peticiones. En este proyecto son principalmente el header, la barra
+        superior, el chat, la barra móvil, el formulario y el panel administrativo.
+      </p>
+
+      <h3>Componentes de servidor</h3>
+      <p>
+        Los demás se renderizan en el servidor. Eso reduce JavaScript enviado al visitante y
+        permite leer contenido antes de generar el HTML. El límite es que no pueden responder
+        directamente a clics ni usar <code>useState</code>.
+      </p>
+    </section>
+
+    <section id="chat" class="page">
+      <h2>6. Asesor conversacional</h2>
+      <p>
+        El asesor es una máquina de estados basada en reglas. No llama a ChatGPT, Groq ni a
+        otro modelo. Por eso no tiene costo por mensaje y su conducta es reproducible, pero
+        requiere mantener manualmente detectores, preguntas y excepciones.
+      </p>
+
+      <h3>Archivos principales</h3>
+      <ul>
+        <li><code>components/site-assistant.tsx</code>: interfaz, mensajes, chips, foco, eventos y <code>sessionStorage</code>.</li>
+        <li><code>app/api/assistant/route.ts</code>: entrada HTTP, limpieza, límite de uso y guardado.</li>
+        <li><code>lib/assistant-local.ts</code>: tipos, detección, árboles de preguntas, resumen y captura del lead.</li>
+        <li><code>scripts/chat-100-users.ts</code>: simulador de regresión con 101 usuarios.</li>
+      </ul>
+
+      <h3>Estado de la conversación</h3>
+      <table>
+        <thead><tr><th>Campo</th><th>Significado</th></tr></thead>
+        <tbody>
+          <tr><td><code>jobs</code></td><td>Trabajos detectados; cada uno tiene tipo, paso y respuestas.</td></tr>
+          <tr><td><code>current</code></td><td>Trabajo que se está completando.</td></tr>
+          <tr><td><code>zona</code> / <code>cobertura</code></td><td>Ubicación y clasificación ok, pending o review.</td></tr>
+          <tr><td><code>confirmed</code></td><td>El visitante aceptó el resumen.</td></tr>
+          <tr><td><code>name</code> / <code>phone</code></td><td>Datos de contacto.</td></tr>
+          <tr><td><code>leadSaved</code></td><td>Evita guardar otra vez el mismo flujo.</td></tr>
+          <tr><td><code>history</code></td><td>Hasta 20 instantáneas para volver atrás.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Tipos de trabajo</h3>
+      <p>
+        Locativa, pintura, plomería, electricidad, instalaciones, remodelaciones, fachadas,
+        impermeabilización y otro. Cada tipo tiene preguntas dinámicas. Por ejemplo, plomería
+        cambia según fuga, instalación o daño; pintura según interior, exterior, área, altura,
+        estado y humedad; electricidad detecta situaciones de riesgo y evita diagnosticar.
+      </p>
+
+      <h3>Cobertura</h3>
+      <ul>
+        <li><strong>ok:</strong> zonas principales del norte de Bogotá, Chapinero/Teusaquillo y Sabana norte.</li>
+        <li><strong>pending:</strong> zonas que requieren confirmación operativa.</li>
+        <li><strong>review:</strong> zonas fuera de la cobertura principal, evaluadas caso por caso.</li>
+      </ul>
+
+      <h3>Sesión y versión</h3>
+      <p>
+        El navegador guarda la conversación en <code>sessionStorage</code> bajo
+        <code>obratech-assistant-v16</code>. Al cambiar reglas o el mensaje inicial debe
+        incrementarse la versión para evitar que una pestaña reutilice estados incompatibles.
+      </p>
+
+      <h3>Límites técnicos del motor</h3>
+      <ul>
+        <li>El archivo central es muy grande y concentra demasiadas responsabilidades.</li>
+        <li>La detección depende de palabras y subcadenas; nuevas frases pueden producir falsos positivos.</li>
+        <li>El estado llega desde el cliente, se limpia y se verifica contra la firma HMAC que el servidor emitió en el turno anterior.</li>
+        <li>El flujo directo de <code>fachadas</code> compite con pintura e impermeabilización y se activa poco.</li>
+        <li>La suite cubre caminos comerciales, pero no integración HTTP, UI ni todas las ramas profundas.</li>
+      </ul>
+    </section>
+
+    <section id="admin" class="page">
+      <h2>7. Panel administrativo</h2>
+      <p>
+        <code>/admin</code> es una aplicación de cliente contenida principalmente en
+        <code>components/admin/admin-app.tsx</code>. Tiene una única contraseña y tres pestañas.
+        La pestaña inicial es Solicitudes.
+      </p>
+
+      <h3>Solicitudes</h3>
+      <ul>
+        <li>Muestra leads del chat y formulario.</li>
+        <li>La pestaña enseña un contador de solicitudes nuevas.</li>
+        <li>El botón “Solo nuevas” oculta las que ya pasaron a Contactar, Cotizando o Cerrado.</li>
+        <li>Estados: Nuevo, Contactar, Cotizando y Cerrado.</li>
+        <li>El teléfono es un enlace a WhatsApp.</li>
+        <li>Al cambiar a Contactar también se abre WhatsApp con mensaje prellenado.</li>
+        <li>No existe eliminación de leads desde la interfaz.</li>
+      </ul>
+
+      <h3>Fotos</h3>
+      <ul>
+        <li>Acepta selección, arrastrar y soltar, y pegado con Ctrl+V en el recuadro de subida.</li>
+        <li>El navegador comprime la imagen a WebP, máximo aproximado de 1920 px; GIF se conserva.</li>
+        <li>La API rechaza archivos mayores de 8 MB.</li>
+        <li>Arriba están los lugares de la página (portada, Nosotros, fondo, tarjetas y cada proyecto, incluido el antes). Se pulsa Cambiar y después la foto de la biblioteca.</li>
+        <li>Cada miniatura indica en qué lugar se usa.</li>
+        <li>Solo se eliminan archivos bajo <code>/images/uploads/</code>.</li>
+        <li>Asignar una foto modifica el borrador. Hay que pulsar Guardar. Si no se guardó, el panel avisa “Hay cambios sin guardar.”</li>
+      </ul>
+
+      <h3>Contenido</h3>
+      <p>
+        Edita teléfono, WhatsApp, distintivos, los puntos de “Por qué ObraTech”,
+        proyectos, la lista de seis oficios de la home, las tarjetas de exteriores,
+        zonas y preguntas frecuentes. Testimonios permanece plegado mientras el
+        interruptor “Mostrar en la web” está apagado. Hay saltos a Proyectos, Zonas
+        y Preguntas. Los identificadores internos de servicios y las reglas del chat
+        siguen en el código. Si se borran todas las zonas o todas las preguntas y se
+        guarda, el servidor restaura las de siempre y el panel muestra ese resultado.
+      </p>
+
+      <h3>Contraseña</h3>
+      <p>
+        Dentro del panel, el botón Contraseña pide la actual y una nueva de al menos
+        10 caracteres. La nueva queda en <code>data/admin-password.json</code> y
+        reemplaza a <code>ADMIN_PASSWORD</code>. En la pantalla de entrada, “Olvidé
+        la contraseña” abre <code>/admin/recuperar</code>. Esa página solo acepta el
+        cambio si se entra por localhost en el computador donde corre el sitio.
+      </p>
+
+      <h3>Identidad comercial</h3>
+      <p>
+        El tipo de datos contempla razón social, NIT y año de operación, y el footer solo
+        muestra campos llenos. Actualmente están vacíos porque el negocio todavía no tiene
+        identidad legal registrada. No aparece un hueco visual en la página.
+      </p>
+    </section>
+
+    <section id="api" class="page">
+      <h2>8. APIs</h2>
+      <table>
+        <thead><tr><th>Método</th><th>Ruta</th><th>Autenticación</th><th>Responsabilidad</th></tr></thead>
+        <tbody>
+          <tr><td>POST</td><td><code>/api/assistant</code></td><td>No</td><td>Procesar un turno y guardar el lead cuando se completa.</td></tr>
+          <tr><td>POST</td><td><code>/api/leads</code></td><td>No</td><td>Recibir el formulario público.</td></tr>
+          <tr><td>GET</td><td><code>/api/leads</code></td><td>Admin</td><td>Listar solicitudes.</td></tr>
+          <tr><td>PATCH</td><td><code>/api/leads</code></td><td>Admin</td><td>Cambiar el estado.</td></tr>
+          <tr><td>POST</td><td><code>/api/admin/login</code></td><td>Contraseña</td><td>Crear cookie de sesión.</td></tr>
+          <tr><td>POST</td><td><code>/api/admin/logout</code></td><td>No</td><td>Borrar cookie.</td></tr>
+          <tr><td>GET</td><td><code>/api/admin/me</code></td><td>Cookie</td><td>Confirmar si la sesión es válida.</td></tr>
+          <tr><td>GET / PUT</td><td><code>/api/admin/content</code></td><td>Admin</td><td>Leer o reemplazar <code>site.json</code>. La respuesta trae el contenido ya saneado.</td></tr>
+          <tr><td>GET / POST / DELETE</td><td><code>/api/admin/images</code></td><td>Admin</td><td>Listar, subir o borrar imágenes.</td></tr>
+          <tr><td>POST</td><td><code>/api/admin/password</code></td><td>Admin</td><td>Cambiar la contraseña estando dentro del panel.</td></tr>
+          <tr><td>POST</td><td><code>/api/admin/recover</code></td><td>Solo localhost</td><td>Elegir otra contraseña desde el computador del sitio.</td></tr>
+          <tr><td>GET</td><td><code>/api/media/:file</code></td><td>No</td><td>Servir una foto de <code>uploads</code> subida después de arrancar el servidor.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Validaciones públicas</h3>
+      <ul>
+        <li>Chat: mensaje requerido, espacios normalizados y máximo 500 caracteres.</li>
+        <li>Formulario: nombre, teléfono y longitudes máximas; honeypot <code>company</code>.</li>
+        <li>Formulario UI: captura caída de red y diferencia una respuesta HTTP 429.</li>
+        <li>Imágenes: máximo 8 MB, y el archivo se decodifica de verdad antes de aceptarlo.</li>
+        <li>DELETE de imágenes valida que la ruta final permanezca en uploads y bloquea <code>..</code>.</li>
+      </ul>
+    </section>
+
+    <section id="datos" class="page">
+      <h2>9. Datos y almacenamiento</h2>
+      <table>
+        <thead><tr><th>Ruta</th><th>Contenido</th><th>Sensible</th><th>Git</th></tr></thead>
+        <tbody>
+          <tr><td><code>data/site.json</code></td><td>Contenido público y configuración.</td><td>No, salvo datos comerciales.</td><td>Debe versionarse.</td></tr>
+          <tr><td><code>data/leads.json</code></td><td>Nombres, teléfonos, zona y mensajes.</td><td>Sí, datos personales.</td><td>Ignorado.</td></tr>
+          <tr><td><code>public/images/</code></td><td>Imágenes base del sitio.</td><td>No.</td><td>Debe versionarse.</td></tr>
+          <tr><td><code>public/images/uploads/</code></td><td>Imágenes subidas en operación.</td><td>Depende de la foto.</td><td>Requiere política clara.</td></tr>
+          <tr><td><code>data/admin-password.json</code></td><td>Hash de la contraseña elegida en el panel.</td><td>Sí.</td><td>Ignorado.</td></tr>
+          <tr><td><code>.env.local</code></td><td>Contraseña inicial, secreto y URL.</td><td>Sí.</td><td>Ignorado.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Contenido de <code>site.json</code></h3>
+      <p>
+        WhatsApp, teléfono, nombre del sitio, portada, foto y fondo de Nosotros,
+        distintivos, la lista de seis oficios de la home (<code>serviciosInicio</code>),
+        tarjetas de servicio, proyectos (foto, antes opcional y una línea de resultado),
+        testimonios y si se muestran, razones para elegir, zonas, FAQ e identidad opcional.
+        No hay bloque de cotizador.
+      </p>
+
+      <h3>Reglas de leads</h3>
+      <ul>
+        <li>Se normaliza el número de teléfono.</li>
+        <li>Mismo teléfono y mismo origen dentro de 30 minutos actualiza en vez de duplicar.</li>
+        <li>El archivo conserva como máximo 200 solicitudes.</li>
+        <li>Estados válidos: <code>new</code>, <code>contact</code>, <code>quoting</code>, <code>done</code>.</li>
+      </ul>
+
+      <h3>Limitación esencial</h3>
+      <div class="summary">
+        Los dos archivos se escriben con temporal y renombrado, y las operaciones sobre leads se
+        encadenan dentro del proceso, de modo que dos solicitudes simultáneas no se pisan ni dejan
+        el archivo partido. Lo que no cubre esa protección es tener <strong>varios procesos</strong>
+        escribiendo el mismo archivo: ahí sí habría condición de carrera. Y si el hosting reemplaza
+        la instancia o usa filesystem efímero, se pierden solicitudes y fotos. Para producción
+        estable conviene migrar leads y contenido a una base de datos, y fotos a almacenamiento de
+        objetos.
+      </div>
+    </section>
+
+    <section id="seguridad" class="page">
+      <h2>10. Seguridad</h2>
+
+      <h3>Cómo funciona el login</h3>
+      <ol>
+        <li>La API compara la contraseña enviada con <code>ADMIN_PASSWORD</code>, en tiempo constante.</li>
+        <li>Crea un payload <code>admin:{timestamp}</code>.</li>
+        <li>Firma el payload con HMAC SHA-256 usando <code>ADMIN_SECRET</code>.</li>
+        <li>Guarda token y firma en la cookie <code>obratech_admin</code>.</li>
+        <li>La cookie es <code>httpOnly</code>, <code>SameSite=lax</code>, dura siete días y usa <code>secure</code> en producción.</li>
+      </ol>
+
+      <h3>Controles existentes</h3>
+      <ul>
+        <li>Sin contraseña por defecto: el login falla si faltan <code>ADMIN_PASSWORD</code> o <code>ADMIN_SECRET</code>, o si traen valores de ejemplo.</li>
+        <li>Seis intentos fallidos por IP cada quince minutos.</li>
+        <li>Comparación de contraseña y firma con <code>timingSafeEqual</code>.</li>
+        <li>Cookie inaccesible desde JavaScript del navegador.</li>
+        <li>APIs de contenido, imágenes y lectura de leads verifican autenticación.</li>
+        <li>Guardado de contenido saneado campo por campo y escrito de forma atómica.</li>
+        <li>Fotos decodificadas y reprocesadas en el servidor; se descartan los metadatos EXIF.</li>
+        <li>Estado del chat firmado con HMAC en cada turno.</li>
+        <li>Leads y variables secretas están ignorados por Git.</li>
+        <li>Eliminación de imágenes protege contra traversal de rutas.</li>
+        <li>Formulario con honeypot y límites de frecuencia.</li>
+      </ul>
+
+      <h3>Corregido en esta revisión</h3>
+      <table>
+        <thead><tr><th>Riesgo anterior</th><th>Cómo quedó</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Contraseña y secreto tenían valores por defecto conocidos en el código.</td>
+            <td>Se eliminaron. <code>lib/admin-auth.ts</code> exige ambas variables y rechaza los valores publicados en <code>env.example</code>. Las credenciales activas se regeneraron con <code>crypto.randomBytes</code>.</td>
+          </tr>
+          <tr>
+            <td>Login sin límite de intentos.</td>
+            <td>Seis fallos por IP cada quince minutos, con respuesta 429. El contador se borra al acertar.</td>
+          </tr>
+          <tr>
+            <td><code>PUT /api/admin/content</code> validaba solo campos superficiales.</td>
+            <td><code>sanitizeSiteContent()</code> valida y convierte cada campo, descarta las filas rotas y conserva el valor anterior en los campos que romperían el render. La escritura pasa por un temporal que se renombra encima.</td>
+          </tr>
+          <tr>
+            <td>Estado del chat controlado por el cliente.</td>
+            <td>Cada respuesta incluye una firma HMAC del estado. Si no cuadra al volver, la conversación arranca de cero, así que no se pueden fabricar solicitudes con <code>confirmed</code>, <code>name</code> y <code>phone</code> ya puestos.</td>
+          </tr>
+          <tr>
+            <td>La subida confiaba en el tipo declarado y la extensión.</td>
+            <td>El archivo se decodifica con <code>sharp</code>. Si no es una imagen real, se rechaza; si lo es, se reprocesa a WebP de máximo 2400 px y pierde los metadatos EXIF.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Riesgos que siguen abiertos</h3>
+      <table>
+        <thead><tr><th>Prioridad</th><th>Riesgo</th><th>Consecuencia</th><th>Acción</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="status high">Alta</span></td>
+            <td>El token incluye timestamp, pero la verificación no comprueba su edad.</td>
+            <td>Una copia del token podría seguir siendo válida fuera de la vida de la cookie.</td>
+            <td>Validar el timestamp al verificar. Mientras tanto, rotar <code>ADMIN_SECRET</code> cierra todas las sesiones.</td>
+          </tr>
+          <tr>
+            <td><span class="status high">Alta</span></td>
+            <td>Rate limits en memoria y basados en <code>x-forwarded-for</code>.</td>
+            <td>Se reinician y no se comparten entre procesos; dependen del proxy.</td>
+            <td>Usar Redis o el límite del proveedor con un proxy confiable. Depende de dónde se publique.</td>
+          </tr>
+          <tr>
+            <td><span class="status">Media</span></td>
+            <td>El chat sigue aceptando datos falsos escritos por una persona real.</td>
+            <td>Solicitudes basura en el panel, aunque ya no se puedan fabricar por API.</td>
+            <td>Verificación del teléfono si el volumen de spam lo justifica.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <code>robots.txt</code> y <code>noindex</code> no protegen el panel: solo piden a
+        buscadores que no lo muestren. La protección real es la autenticación.
+      </p>
+    </section>
+
+    <section id="seo" class="page">
+      <h2>11. SEO, accesibilidad y rendimiento</h2>
+
+      <h3>SEO implementado</h3>
+      <ul>
+        <li>Título, descripción, Open Graph, iconos y URL base en <code>app/layout.tsx</code>.</li>
+        <li>JSON-LD de tipo <code>HomeAndConstructionBusiness</code>.</li>
+        <li><code>sitemap.xml</code> con home y privacidad.</li>
+        <li><code>robots.txt</code> que bloquea <code>/admin</code>, <code>/api/</code> y <code>/diseno</code>.</li>
+        <li><code>/diseno</code> y <code>/admin</code> no se indexan.</li>
+      </ul>
+
+      <h3>Accesibilidad implementada</h3>
+      <ul>
+        <li>Idioma español en el documento raíz.</li>
+        <li>Enlace para saltar al contenido.</li>
+        <li>Foco visible global.</li>
+        <li>Inputs de 16 px para evitar zoom automático en móvil.</li>
+        <li>Menú con <code>aria-expanded</code> y chat con diálogo, foco y <code>aria-live</code>.</li>
+        <li>Respeto de <code>prefers-reduced-motion</code>.</li>
+        <li>Mensajes del formulario anunciados con <code>aria-live</code>.</li>
+        <li>Iconos decorativos ocultos a lectores de pantalla.</li>
+      </ul>
+
+      <h3>Rendimiento</h3>
+      <ul>
+        <li>Las imágenes de secciones usan <code>next/image</code>.</li>
+        <li>El hero usa <code>fill</code>, <code>sizes="100vw"</code> y <code>preload</code>.</li>
+        <li>La mayoría de las secciones son componentes de servidor.</li>
+        <li>La home usa <code>force-dynamic</code>; cada visita relee el JSON y no aprovecha caché estática.</li>
+        <li><code>SiteJsonLd</code> también lee contenido desde disco en el layout.</li>
+      </ul>
+
+      <h3>Pendientes</h3>
+      <ul>
+        <li>Configurar el dominio real antes del build.</li>
+        <li>Añadir descripción específica a privacidad.</li>
+        <li>Centralizar el horario; actualmente está repetido en código y datos estructurados.</li>
+        <li>Medir Core Web Vitals en un teléfono real y conexión móvil.</li>
+        <li>Reemplazar la imagen del hero por una original de mayor resolución.</li>
+      </ul>
+    </section>
+
+    <section id="local" class="page">
+      <h2>12. Uso local y acceso desde el celular</h2>
+
+      <h3>Instalación normal</h3>
+      <pre>npm install
+npm run dev</pre>
+      <p>Abre <code>http://localhost:3000</code>. El panel está en <code>/admin</code>.</p>
+
+      <h3>Acceso en la misma red Wi-Fi</h3>
+      <pre>npm run dev:stop
+npm run dev:firewall
+npm run dev:lan</pre>
+      <ol>
+        <li><code>dev:stop</code> libera los puertos 3000 y 3001.</li>
+        <li><code>dev:firewall</code> debe ejecutarse con PowerShell como administrador; abre TCP 3001.</li>
+        <li><code>dev:lan</code> inicia Next.js en <code>0.0.0.0:3001</code> y muestra la IP Wi-Fi.</li>
+        <li>El celular debe estar en la misma Wi-Fi, sin datos móviles, y abrir <code>http://IP:3001</code>.</li>
+      </ol>
+
+      <h3>Si no carga</h3>
+      <ul>
+        <li>Usar <code>http://</code>, no HTTPS.</li>
+        <li>Confirmar que la dirección es la IPv4 de Wi-Fi, no VirtualBox, VMware o VPN.</li>
+        <li>Confirmar que el proceso está escuchando en 3001.</li>
+        <li>Revisar aislamiento de clientes en el router.</li>
+        <li>Desactivar temporalmente VPN o firewall de terceros solo para diagnosticar.</li>
+      </ul>
+    </section>
+
+    <section id="pruebas" class="page">
+      <h2>13. Pruebas y calidad</h2>
+      <table>
+        <thead><tr><th>Comando</th><th>Qué comprueba</th><th>Último estado verificado</th></tr></thead>
+        <tbody>
+          <tr><td><code>npx tsc --noEmit</code></td><td>Errores de tipos.</td><td class="good">Correcto</td></tr>
+          <tr><td><code>npm run lint</code></td><td>Reglas ESLint y Next.js.</td><td class="good">Sin errores ni avisos</td></tr>
+          <tr><td><code>npm run build</code></td><td>Compilación real de producción.</td><td class="good">Correcto</td></tr>
+          <tr><td><code>npm run test:chat</code></td><td>Simulación de conversaciones.</td><td class="good">101 de 101</td></tr>
+          <tr><td><code>npm run test:security</code></td><td>Firma del estado del chat, anti-forja y saneado de contenido.</td><td class="good">Todo correcto</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Qué cubre la prueba del chat</h3>
+      <p>
+        Pintura, plomería, electricidad, locativa, remodelación, instalaciones, fachadas,
+        impermeabilización, humedad, varios trabajos, cobertura, riesgos eléctricos,
+        frases desordenadas, falsos positivos y acciones de volver/reiniciar.
+      </p>
+
+      <h3>Qué no cubre</h3>
+      <ul>
+        <li>Peticiones HTTP reales y persistencia en disco.</li>
+        <li>Interacción visual del chat y del panel.</li>
+        <li>Migración de <code>sessionStorage</code>.</li>
+        <li>Rate limits y respuesta 429 de extremo a extremo.</li>
+        <li>Todas las subramas de plomería y electricidad.</li>
+        <li>Sanitización con estados maliciosos.</li>
+        <li>Pruebas de concurrencia al escribir JSON.</li>
+      </ul>
+
+      <h3>Observación sobre Git</h3>
+      <p>
+        El repositorio tiene un solo commit y gran parte del proyecto fue creada o modificada
+        después. Antes de continuar con cambios importantes debe hacerse una copia versionada,
+        revisar que <code>.next</code>, <code>.env*</code> y <code>data/leads.json</code> no se
+        incluyan, y configurar un remoto privado.
+      </p>
+    </section>
+
+    <section id="publicar" class="page">
+      <h2>14. Publicación</h2>
+
+      <h3>Hosting requerido por el diseño actual</h3>
+      <p>
+        Debe ejecutar Node.js y proporcionar disco persistente con permisos de escritura en
+        <code>data/</code> y <code>public/images/uploads/</code>. Un despliegue serverless
+        convencional en Vercel no garantiza esa persistencia.
+      </p>
+
+      <h3>Proceso recomendado</h3>
+      <ol>
+        <li>Guardar todo en un repositorio Git privado.</li>
+        <li>Elegir VPS, contenedor con volumen o plataforma con almacenamiento persistente.</li>
+        <li>Configurar <code>ADMIN_PASSWORD</code>, <code>ADMIN_SECRET</code> y <code>NEXT_PUBLIC_SITE_URL</code>.</li>
+        <li>Verificar que el login funciona con esas variables: si faltan, el panel no deja entrar.</li>
+        <li>Ejecutar <code>npm ci</code>, pruebas y <code>npm run build</code>.</li>
+        <li>Servir con <code>npm start</code> detrás de HTTPS y un proxy inverso.</li>
+        <li>Montar volúmenes persistentes y programar backups.</li>
+        <li>Probar formulario, chat, subida de imagen y reinicio del servidor.</li>
+        <li>Configurar monitoreo de errores y disponibilidad.</li>
+      </ol>
+
+      <h3>Checklist obligatorio</h3>
+      <ul>
+        <li>Dominio y HTTPS funcionando.</li>
+        <li>WhatsApp y teléfono reales.</li>
+        <li>Secretos fuertes, únicos y fuera de Git.</li>
+        <li>Identidad comercial clara cuando exista.</li>
+        <li>Política de datos revisada para la operación real.</li>
+        <li>Backup probado, no solo configurado.</li>
+        <li>Protección de fuerza bruta del proveedor, además del límite en memoria de la aplicación.</li>
+        <li>Permisos de escritura verificados.</li>
+      </ul>
+    </section>
+
+    <section id="mantenimiento" class="page">
+      <h2>15. Mantenimiento diario</h2>
+
+      <h3>Operación</h3>
+      <ol>
+        <li>Entrar a <code>/admin</code>.</li>
+        <li>Revisar el contador de solicitudes nuevas.</li>
+        <li>Contactar por WhatsApp y cambiar a Contactar.</li>
+        <li>Al preparar precio, cambiar a Cotizando.</li>
+        <li>Al terminar o descartar, cambiar a Cerrado.</li>
+      </ol>
+
+      <h3>Cambiar contenido</h3>
+      <ol>
+        <li>Editar en la pestaña Contenido.</li>
+        <li>Revisar números, tildes, enlaces y fotografías.</li>
+        <li>Guardar una sola vez.</li>
+        <li>Recargar la web pública y revisar móvil y escritorio.</li>
+      </ol>
+
+      <h3>Cambiar fotos</h3>
+      <ol>
+        <li>Subir o arrastrar la imagen.</li>
+        <li>Seleccionarla y asignarla al bloque correcto.</li>
+        <li>Guardar contenido.</li>
+        <li>No borrar una imagen que todavía esté asignada.</li>
+      </ol>
+
+      <h3>Cambiar reglas del chat</h3>
+      <ol>
+        <li>Editar detectores, preguntas o inferencias en <code>lib/assistant-local.ts</code>.</li>
+        <li>Añadir un caso de regresión al script de 101 usuarios.</li>
+        <li>Incrementar <code>STORAGE_KEY</code> y <code>CHAT_REVISION</code>.</li>
+        <li>Ejecutar tipos, lint, build y prueba del chat.</li>
+        <li>Probar manualmente frases libres y botones.</li>
+      </ol>
+
+      <h3>Backups</h3>
+      <p>
+        Copiar diariamente <code>data/site.json</code>, <code>data/leads.json</code> y
+        <code>public/images/uploads/</code>. Cifrar el backup de leads porque contiene teléfonos.
+        Definir un periodo de retención y borrar datos que ya no sean necesarios.
+      </p>
+    </section>
+
+    <section id="riesgos" class="page">
+      <h2>16. Riesgos y prioridades</h2>
+
+      <h3>Prioridad 0 — Evitar pérdida del proyecto</h3>
+      <ol>
+        <li>Crear un commit limpio y un remoto privado.</li>
+        <li>Confirmar exclusión de secretos, leads y build.</li>
+        <li>Guardar una copia externa.</li>
+      </ol>
+
+      <h3>Prioridad 1 — Antes de Internet</h3>
+      <ol>
+        <li><s>Eliminar credenciales de desarrollo y exigir variables.</s> Hecho.</li>
+        <li><s>Agregar rate limit al login.</s> Hecho, en memoria.</li>
+        <li>Validar expiración del token. Pendiente.</li>
+        <li>Configurar dominio, HTTPS y hosting persistente.</li>
+        <li>Implementar backup automático.</li>
+      </ol>
+
+      <h3>Prioridad 2 — Confiabilidad</h3>
+      <ol>
+        <li><s>Validación completa de <code>site.json</code>.</s> Hecho.</li>
+        <li><s>Escrituras atómicas y cola de leads dentro de un proceso.</s> Hecho. Varios procesos sobre el mismo archivo siguen pudiendo pisarse.</li>
+        <li>Rate limit compartido entre instancias. Pendiente, depende del hosting.</li>
+        <li><s>Verificación real del contenido de imágenes.</s> Hecho con <code>sharp</code>.</li>
+        <li>Pruebas de integración de APIs y almacenamiento.</li>
+      </ol>
+
+      <h3>Prioridad 3 — Producto y conversión</h3>
+      <ol>
+        <li>Foto real del equipo trabajando, con permiso de uso.</li>
+        <li>Testimonios verificables; mantenerlos ocultos mientras no sean reales.</li>
+        <li>Imagen de hero de mayor resolución.</li>
+        <li>Medir cuántas visitas terminan en lead y cuántas cotizaciones cierran.</li>
+        <li>Validar el flujo con al menos cinco clientes reales antes de añadir funciones.</li>
+      </ol>
+
+      <h3>Prioridad 4 — Refactor técnico</h3>
+      <ol>
+        <li>Dividir <code>assistant-local.ts</code> por servicios y responsabilidades.</li>
+        <li>Dividir <code>admin-app.tsx</code> por pestañas.</li>
+        <li><s>Extraer rate limiting común.</s> Hecho en <code>lib/rate-limit.ts</code>.</li>
+        <li><s>Quitar el bloque <code>cotizador</code>.</s> Hecho. Ya no está en <code>site.json</code> ni en el saneado.</li>
+        <li>Centralizar horario y opciones de servicios.</li>
+      </ol>
+    </section>
+
+    <section id="mapa" class="page">
+      <h2>17. Mapa de archivos</h2>
+      <pre>obratech-web/
+├── app/
+│   ├── layout.tsx                 raíz, fuente, SEO y JSON-LD
+│   ├── page.tsx                   home pública
+│   ├── globals.css                sistema visual
+│   ├── admin/page.tsx             entrada del panel
+│   ├── admin/recuperar/page.tsx   recuperar contraseña en localhost
+│   ├── diseno/page.tsx            vista de revisión visual
+│   ├── privacidad/page.tsx        tratamiento de datos
+│   ├── robots.ts                  reglas de rastreo
+│   ├── sitemap.ts                 URLs indexables
+│   └── api/
+│       ├── assistant/route.ts     conversación pública
+│       ├── leads/route.ts         formulario + gestión admin
+│       ├── admin/
+│       │   ├── login/route.ts
+│       │   ├── logout/route.ts
+│       │   ├── me/route.ts
+│       │   ├── content/route.ts
+│       │   ├── images/route.ts
+│       │   ├── password/route.ts
+│       │   └── recover/route.ts
+│       └── media/[file]/route.ts  fotos de uploads tras el arranque
+├── components/
+│   ├── admin/admin-app.tsx
+│   ├── admin/recover-form.tsx
+│   ├── sections/                  secciones de la home
+│   ├── site-shell.tsx             orden compartido de / y /diseno
+│   ├── site-assistant.tsx
+│   ├── site-header.tsx
+│   ├── site-json-ld.tsx
+│   ├── logo.tsx
+│   ├── mobile-action-bar.tsx
+│   └── whatsapp-link.tsx
+├── lib/
+│   ├── assistant-local.ts         motor del asesor
+│   ├── site-store.ts              contenido y leads
+│   ├── admin-auth.ts              cookie y firma
+│   ├── admin-password.ts          hash y recuperación local
+│   ├── rate-limit.ts              límites de login, formulario y chat
+│   ├── content.ts                 navegación e iconos
+│   └── compress-image.ts          compresión en navegador
+├── data/
+│   ├── site.json                  contenido público
+│   └── leads.json                 datos personales; ignorado
+├── public/images/                 imágenes base y uploads
+├── scripts/
+│   ├── chat-100-users.ts          prueba del chat
+│   ├── dev-lan.mjs                servidor Wi-Fi en 3001
+│   ├── dev-stop.mjs               libera 3000 y 3001
+│   └── abrir-puerto-dev.ps1       regla de firewall
+├── env.example
+├── next.config.ts
+├── package.json
+└── tsconfig.json</pre>
+    </section>
+
+    <section id="glosario" class="page">
+      <h2>18. Glosario</h2>
+      <table>
+        <thead><tr><th>Término</th><th>Explicación sencilla</th></tr></thead>
+        <tbody>
+          <tr><td>API</td><td>Puerta por la que la interfaz pide o envía datos al servidor.</td></tr>
+          <tr><td>Build</td><td>Proceso que convierte el código fuente en la versión lista para publicar.</td></tr>
+          <tr><td>Client Component</td><td>Parte de React que corre en el navegador y responde a eventos.</td></tr>
+          <tr><td>Cookie httpOnly</td><td>Dato de sesión que el navegador envía, pero JavaScript no puede leer.</td></tr>
+          <tr><td>Filesystem efímero</td><td>Disco que puede borrarse cuando el proveedor reinicia la aplicación.</td></tr>
+          <tr><td>HMAC</td><td>Firma criptográfica que demuestra que un token no fue modificado.</td></tr>
+          <tr><td>Lead</td><td>Persona que dejó datos y manifestó interés en un servicio.</td></tr>
+          <tr><td>MVP</td><td>Versión mínima del producto para validar si funciona comercialmente.</td></tr>
+          <tr><td>Rate limit</td><td>Límite de peticiones para reducir abuso y automatización.</td></tr>
+          <tr><td>Server Component</td><td>Parte de React preparada en el servidor antes de llegar al navegador.</td></tr>
+          <tr><td>SEO</td><td>Prácticas que ayudan a buscadores a comprender e indexar la web.</td></tr>
+          <tr><td>WebP</td><td>Formato moderno de imagen con buena compresión.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="summary">
+        <strong>Estado recomendado del proyecto:</strong> mantenerlo como MVP de validación,
+        guardar una copia privada en Git, probarlo con clientes reales y resolver primero
+        persistencia y seguridad. No conviene añadir pagos, usuarios o automatizaciones
+        complejas antes de demostrar que el flujo actual convierte solicitudes en trabajos.
+      </div>
+
+      <p class="footer-note">
+        Fin del informe. Fuentes revisadas: código en app, components, lib, scripts, data y
+        configuración del repositorio. Las recomendaciones distinguen entre funcionamiento
+        actual y requisitos para una publicación estable.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

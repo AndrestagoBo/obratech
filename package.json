@@ -4,14 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:lan": "node scripts/dev-lan.mjs",
+    "dev:stop": "node scripts/dev-stop.mjs",
+    "dev:firewall": "powershell -ExecutionPolicy Bypass -File scripts/abrir-puerto-dev.ps1",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:chat": "npx tsx scripts/chat-100-users.ts",
+    "test:security": "npx tsx scripts/verify-security.ts"
   },
   "dependencies": {
+    "lucide-react": "^1.7.0",
     "next": "16.2.2",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
