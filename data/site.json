@@ -1,0 +1,137 @@
+{
+  "whatsappNumber": "573156670450",
+  "phoneDisplay": "+57 315 667 0450",
+  "siteName": "ObraTech Bogotá",
+  "heroImage": "/images/hero-pintor.png",
+  "nosotrosImage": "/images/nosotros-destacada.jpg",
+  "nosotrosFondo": "/images/nosotros-fondo.jpeg",
+  "badges": ["Garantía de 6 meses", "Cotización sin costo", "Un contacto para varios oficios", "Bogotá y Sabana"],
+  "serviciosInicio": [
+    { "id": "pintura", "title": "Pintura", "desc": "Una habitación o el apartamento entero." },
+    { "id": "locativa", "title": "Reparaciones", "desc": "Paredes, puertas, techos, humedad puntual." },
+    { "id": "plomeria", "title": "Plomería", "desc": "Gotea, no baja, hay que cambiar la grifería." },
+    { "id": "electricidad", "title": "Electricidad", "desc": "Lámpara, toma, interruptor, corto." },
+    { "id": "instalaciones", "title": "Instalaciones", "desc": "Cortinas, espejo, TV, repisa." },
+    { "id": "remodelaciones", "title": "Remodelar", "desc": "Baño, cocina, un cambio de mayor alcance." }
+  ],
+  "servicios": [
+    {
+      "id": "locativa",
+      "title": "Reparaciones del hogar",
+      "desc": "Plomería, electricidad, instalaciones y arreglos locativos. Cuéntanos el problema; nosotros lo clasificamos.",
+      "bgImage": "/images/servicio-locativos.jpg"
+    },
+    {
+      "id": "fachadas",
+      "title": "Fachadas",
+      "desc": "Pintura exterior, sellado y mantenimiento.",
+      "bgImage": "/images/servicio-fachadas.jpg"
+    },
+    {
+      "id": "impermeabilizacion",
+      "title": "Impermeabilización",
+      "desc": "Cubiertas, terrazas y jardineras.",
+      "bgImage": "/images/servicio-impermeabilizacion.jpg"
+    },
+    {
+      "id": "remodelaciones",
+      "title": "Remodelaciones",
+      "desc": "Baños, cocinas y cambios de mayor alcance.",
+      "bgImage": "/images/servicio-remodelaciones.jpg"
+    }
+  ],
+  "proyectos": [
+    {
+      "title": "Impermeabilización Residencial",
+      "city": "Bogotá D.C.",
+      "image": "/images/proyecto1.jpeg"
+    },
+    {
+      "title": "Remodelación Interior",
+      "city": "Chía",
+      "image": "/images/proyecto2.jpeg"
+    },
+    {
+      "title": "Mantenimiento de Fachada",
+      "city": "Bogotá D.C.",
+      "image": "/images/proyecto3.jpeg"
+    }
+  ],
+  "mostrarTestimonios": false,
+  "testimonios": [
+    {
+      "name": "Carlos Rodríguez",
+      "barrio": "Cedritos",
+      "proyecto": "Impermeabilización de cubierta",
+      "texto": "Nos solucionaron una humedad que llevaba años. Profesionales y puntuales.",
+      "rating": 5
+    },
+    {
+      "name": "María Fernández",
+      "barrio": "Usaquén",
+      "proyecto": "Remodelación de baño",
+      "texto": "Quedó espectacular, usaron materiales de primera. Recomendados 100%.",
+      "rating": 5
+    },
+    {
+      "name": "Javier Méndez",
+      "barrio": "Suba",
+      "proyecto": "Mantenimiento de fachada",
+      "texto": "Excelente atención, dejaron todo impecable y a tiempo.",
+      "rating": 5
+    }
+  ],
+  "porqueNosotros": [
+    {
+      "t": "Varios oficios, un contacto",
+      "d": "Plomería, pintura, electricidad o un baño. No tienes que buscar a cada uno."
+    },
+    {
+      "t": "Garantía de 6 meses",
+      "d": "Si algo falla por la ejecución, lo corregimos."
+    }
+  ],
+  "zonas": [
+    { "nombre": "Bogotá", "detalle": "Confirmamos barrio al coordinar" },
+    { "nombre": "Sabana", "detalle": "Confirmamos municipio al coordinar" }
+  ],
+  "empresa": {
+    "razonSocial": "",
+    "nit": "",
+    "desde": ""
+  },
+  "faq": [
+    {
+      "q": "¿Qué tipo de trabajos realizan?",
+      "a": "Reparaciones locativas, pintura, plomería, electricidad, instalaciones y remodelaciones. También fachadas, impermeabilización y trabajos exteriores."
+    },
+    {
+      "q": "¿Pueden resolver varios trabajos en una misma visita?",
+      "a": "Sí. Cuéntanos todo lo pendiente; organizamos la solicitud y coordinamos lo que se pueda en una misma visita."
+    },
+    {
+      "q": "¿Cómo solicito una cotización?",
+      "a": "Usa el asesor del hogar o WhatsApp. No hay precios automáticos en la web: el valor depende del alcance, la zona y el acceso."
+    },
+    {
+      "q": "¿Cotizar tiene algún costo?",
+      "a": "Cotizar por WhatsApp no cuesta. Si el trabajo necesita revisión en sitio para medir el alcance, la visita técnica tiene costo y te confirmamos el valor antes de agendarla."
+    },
+    {
+      "q": "¿El trabajo tiene garantía?",
+      "a": "Sí. El trabajo terminado tiene garantía de 6 meses. Si algo falla por la ejecución, lo corregimos."
+    },
+    {
+      "q": "¿Atienden fuera de Bogotá?",
+      "a": "Atendemos Bogotá y la Sabana. Al escribirnos confirmamos el barrio o municipio."
+    },
+    {
+      "q": "¿Tengo que saber qué profesional necesito?",
+      "a": "No. Cuéntanos qué problema tienes y el asesor te ayuda a identificar el tipo de servicio."
+    },
+    {
+      "q": "¿Cómo se coordina el trabajo?",
+      "a": "Registramos la solicitud, te escribimos por WhatsApp, definimos el alcance y coordinamos la ejecución."
+    }
+  ]
+}
