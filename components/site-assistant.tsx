@@ -119,7 +119,9 @@ export function SiteAssistant({ whatsappNumber }: { whatsappNumber: string }) {
   }, [items, pending, open]);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (!open) return;
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+    inputRef.current?.focus();
   }, [open]);
 
   useEffect(() => {
@@ -224,10 +226,10 @@ export function SiteAssistant({ whatsappNumber }: { whatsappNumber: string }) {
 
   return (
     <div
-      className={`fixed z-50 pointer-events-none left-4 right-4 md:left-8 md:right-auto ${
+      className={`fixed z-[70] flex flex-col pointer-events-none left-4 right-4 md:left-8 md:right-auto ${
         open
-          ? "bottom-[max(5rem,calc(5rem+env(safe-area-inset-bottom)))] md:bottom-[max(2rem,calc(2rem+env(safe-area-inset-bottom)))]"
-          : "bottom-[max(2rem,calc(2rem+env(safe-area-inset-bottom)))]"
+          ? "top-32 bottom-[calc(3.25rem+env(safe-area-inset-bottom))] md:top-auto md:bottom-8"
+          : "bottom-8"
       }`}
     >
       {open ? (
@@ -236,9 +238,9 @@ export function SiteAssistant({ whatsappNumber }: { whatsappNumber: string }) {
           role="dialog"
           aria-modal="true"
           aria-labelledby="assistant-title"
-          className="pointer-events-auto w-full md:w-[22.5rem] mb-3 overflow-hidden panel bg-surface"
+          className="pointer-events-auto flex min-h-0 w-full flex-1 flex-col overflow-hidden panel bg-surface md:mb-3 md:w-[22.5rem] md:max-h-[min(40rem,calc(100dvh-6rem))] md:flex-none"
         >
-          <div className="flex items-start justify-between px-4 py-3 border-b border-white/10 bg-black">
+          <div className="flex shrink-0 items-start justify-between px-4 py-3 border-b border-white/10 bg-black">
             <div>
               <p id="assistant-title" className="text-sm font-bold tracking-tight text-white">
                 Asesor del hogar
@@ -272,7 +274,7 @@ export function SiteAssistant({ whatsappNumber }: { whatsappNumber: string }) {
             </div>
           </div>
 
-          <div ref={listRef} className="max-h-72 md:max-h-80 overflow-y-auto p-4 space-y-3" aria-live="polite">
+          <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto p-4 space-y-3 md:max-h-80 md:flex-none" aria-live="polite">
             {items.map((item, i) => (
               <div key={`${item.role}-${i}`} className={item.role === "user" ? "text-right" : ""}>
                 <p
@@ -308,7 +310,7 @@ export function SiteAssistant({ whatsappNumber }: { whatsappNumber: string }) {
             ))}
           </div>
 
-          <div className="px-3 pb-2 flex flex-wrap gap-1.5">
+          <div className="min-h-0 max-h-36 shrink overflow-y-auto px-3 pb-2 flex flex-wrap gap-1.5">
             {chips.map((chip) => (
               <button
                 key={chip.label}
@@ -322,7 +324,7 @@ export function SiteAssistant({ whatsappNumber }: { whatsappNumber: string }) {
           </div>
 
           <form
-            className="flex border-t border-white/10 bg-black"
+            className="flex shrink-0 border-t border-white/10 bg-black"
             onSubmit={(event) => {
               event.preventDefault();
               void send(input);
@@ -350,7 +352,7 @@ export function SiteAssistant({ whatsappNumber }: { whatsappNumber: string }) {
         ref={launcherRef}
         type="button"
         onClick={() => setOpenSafe((value) => !value)}
-        className="pointer-events-auto hidden md:inline-flex min-h-11 bg-black border border-white/40 text-white px-4 py-2.5 text-sm font-medium hover:border-brand transition-colors"
+        className="pointer-events-auto hidden md:inline-flex shrink-0 min-h-11 bg-black border border-white/40 text-white px-4 py-2.5 text-sm font-medium hover:border-brand transition-colors"
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-controls="assistant-title"

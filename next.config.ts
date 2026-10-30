@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // El celular entra por la IP de la red. Sin esto Next bloquea el JavaScript
+  // y la página se ve, pero los botones no responden.
+  allowedDevOrigins: ["192.168.2.17", "192.168.*.*"],
   images: {
     qualities: [75, 90],
   },
